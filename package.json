@@ -1,0 +1,17 @@
+{
+  "name": "gamut-rings-app",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "gamutjs": "^0.1.0",
+    "vue": "^3.2.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "vite": "^2.6.4",
+    "vite-plugin-singlefile": "^0.5.1"
+  }
+}

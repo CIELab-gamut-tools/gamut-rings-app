@@ -1,0 +1,3 @@
+v1 shows a editor for a synthetic gamut on the left and a gamut rings plot on the right.
+
+The editor will have the x,y coordinates of RGB and W
