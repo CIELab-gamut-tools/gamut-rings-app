@@ -7,6 +7,7 @@ export function createShader(gl, type, source) {
     return shader;
   }
   gl.deleteShader(shader);
+  console.log(gl.getShaderInfoLog(shader))
   throw new Error(gl.getShaderInfoLog(shader))
 }
 
@@ -20,6 +21,7 @@ export function createProgram(gl, vertexShader, fragmentShader) {
     return program;
   }
   gl.deleteProgram(program);
+  console.log(gl.getProgramInfoLog(shader))
   throw new Error(gl.getProgramInfoLog(program))
 }
 
@@ -68,15 +70,27 @@ function isBuiltIn(info) {
 const simple2DVertex="attribute vec4 a_position;void main(){gl_Position = a_position;}";
 const fixedColourFragment="precision mediump float;uniform vec4 u_col;void main(){gl_FragColor=u_col;}";
 
-const lab2DVertex=`
-in vec4 a_position;
-in vec3 a_lab;
-out vec3 v_lab;
+const varColourFragment=`
+precision mediump float;
+uniform float u_chroma;
+uniform float u_lightness;
 void main(){
-  v_lab = a_lab;
-  gl_Position = a_position;
-}
-`
+  vec2 xy = (gl_FragCoord.xy-512.0)/512.0;
+  vec2 ab = u_chroma * xy / sqrt(dot(xy,xy));
+  float fY = (u_lightness + 16.0) / 116.0; 
+  float fX = ab.x/500.0+fY;
+  float fZ = fY-ab.y/200.0;
+  vec3 XYZ = vec3(0.0);
+  if (fX>0.207) XYZ.x=fX*fX*fX; else XYZ.x=fX*0.12842-0.017713;
+  if (fY>0.207) XYZ.y=fY*fY*fY; else XYZ.y=fY*0.12842-0.017713;
+  if (fZ>0.207) XYZ.z=fZ*fZ*fZ; else XYZ.z=fZ*0.12842-0.017713;
+  XYZ *= vec3(0.9504559, 1.0, 1.0890578);
+  // vec3 RGB = XYZ / mat3(0.41246, 0.21267, 0.01933, 0.35758, 0.71515, 0.11919, 0.18044, 0.07218, 0.95030);
+  vec3 RGB = clamp(mat3(3.2404, -0.9692, 0.0557, -1.5371, 1.8760, -0.2040, -0.4985, 0.0415, 1.0572)*XYZ,0.0,1.0);
+  // vec3 RGB = vec3(0.5,0.5,0.5);
+  gl_FragColor=vec4(RGB,1.0);
+}`;
 const programs={
-  fixedColour:[simple2DVertex,fixedColourFragment]
+  fixedColour:[simple2DVertex,fixedColourFragment],
+  varColour:[simple2DVertex, varColourFragment]
 }
