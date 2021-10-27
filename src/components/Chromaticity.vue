@@ -19,6 +19,8 @@ export default {
       point:null,
       was:null,
       focus:null,
+      whiteFocussed:false,
+      edges:null
     }
   },
   mounted(){
@@ -41,20 +43,26 @@ export default {
   methods:{
     mousedown(evt){
       evt.preventDefault();
-      const [x,y] = chords(evt);
+      let [x,y] = chords(evt);
       if (!this.focus) return;
       this.down=true;
       this.point = this.focus;
       this.was=[...this.point];
       this.point[0]=x;
       this.point[1]=y;
+      if (!setIsValid(this.definition.RGBxy, this.definition.white)){
+        [this.point[0], this.point[1]]=this.was;
+      }
     },
     mousemove(evt){
       evt.preventDefault();
-      const [x,y] = chords(evt);
+      let [x,y] = chords(evt);
       if (this.down){
         this.point[0]=x;
         this.point[1]=y;
+      if (!setIsValid(this.definition.RGBxy, this.definition.white)){
+          [this.point[0], this.point[1]]=this.was;
+        }
       } else {
         let d=1e9, closest=null;
         for (let p of [this.definition.white, ...this.definition.RGBxy]){
@@ -64,7 +72,10 @@ export default {
             d=nd;
           }
         }
-        if (this.focus!==closest) this.focus=closest;
+        if (this.focus!==closest) {
+          this.focus=closest;
+          this.whiteFocussed = this.focus === this.definition.white;
+        }
       }
     },
     mouseleave(evt){
@@ -138,6 +149,28 @@ function getFillStyleFromXY([x,y]){
   g=g<0?0:Math.pow(g/mx,0.4)*255;
   b=b<0?0:Math.pow(b/mx,0.4)*255;
   return `rgb(${r},${g},${b})`;
+}
+
+function setIsValid(prims, white){
+  const edges=[];
+  const [wx,wy]=white;
+  for(let i=0;i<3;i++){
+    const [p0x,p0y]=prims[i];
+    const p1=prims[(i+1)%3];
+    let nx = (p0y - p1[1]);
+    let ny = (p1[0] - p0x);
+    let d = p0x*nx+p0y*ny;
+    edges.push([nx,ny]);
+    if (nx*wx+ny*wy<d) return false;
+  }
+  // this loop will also check that the RGB points rotate in the right way
+  // however this is probably not possible without breaking the above constraint
+  
+  // for(let i=0;i<3;i++){
+  //   const e0=edges[i], e1=edges[(i+1)%3];
+  //   if (e0[0]*e1[1]-e0[1]*e1[0]<0) return false;
+  // }
+  return true;
 }
 
 </script>
