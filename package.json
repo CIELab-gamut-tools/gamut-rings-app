@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
+    "rollup-plugin-web-worker-loader": "^1.6.1",
     "vite": "^2.6.4",
     "vite-plugin-singlefile": "^0.5.1"
   }

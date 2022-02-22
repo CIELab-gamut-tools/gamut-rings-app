@@ -24,7 +24,7 @@ export function camcat_cc(XYZ1, XYZn, XYZa){
   return mult(XYZ1,MAM);
 }
 
-export function makeTesselation(gsv){
+export function makeTesselation(gsv, onlyRGB=false){
   //ensure it is a regular array
   gsv = [...gsv];
   const N = gsv.length;
@@ -43,6 +43,7 @@ export function makeTesselation(gsv){
     [J, Upper, K],
     [K, J, Upper]
   ]);
+  if (onlyRGB) return RGB_ref;
   const TRI_ref=zeros(12*(N-1)*(N-1), 3);
   let idx=0;
   for(let s=0; s<6; s++)

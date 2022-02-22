@@ -68,7 +68,7 @@
       <th>CIE1931 x</th>
       <th>CIE1931 y</th>
     </tr>
-    <tr v-for="(xy,i) of definition.RGBxy" >
+    <tr v-for="(xy,i) of definition.RGBxy" :key="i" >
       <td>{{['red','green','blue'][i]}}</td>
       <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[0] /> </td>
       <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[1] /></td>

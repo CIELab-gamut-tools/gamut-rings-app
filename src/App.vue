@@ -114,7 +114,9 @@ export default {
     });
     const gamut = ref(null);
     watchEffect(()=>{
+      const start = performance.now();
       gamut.value = makeSynthetic(gamutDefinition.value);
+      console.log(`synth calc took ${performance.now()-start}ms`);
     })
     return {
       gamut,

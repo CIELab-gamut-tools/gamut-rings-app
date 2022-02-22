@@ -13,7 +13,8 @@ export function rings(g,Ls){
   const dL = 100/g.Lsteps;
   const c = dL*dH/2;
   const volMap = zeros(100,360);
-  const volMapData = volMap[Object.getOwnPropertySymbols(volMap)[0]];
+  const DATA = Object.getOwnPropertySymbols(volMap)[0];
+  const volMapData = volMap[DATA];
   for(let i=0,l=0;l<100;l++)
     for(let a=0;a<360;a++,i++){
       const d=g.cylmap[l][a], N=d.length;
@@ -31,7 +32,7 @@ export function rings(g,Ls){
   const ang = from([[dH/2,'::',dH,2*Math.PI]]);
   const cssA = product(ang.map(Math.sin),cssC);
   const cssB = product(ang.map(Math.cos),cssC);
-  return [cssA, cssB, cssC, sum(volMap)];
+  return [cssA[DATA], cssB[DATA], cssC[DATA], sum(volMap)];
 }
 
  function ringsSVG(g,{
