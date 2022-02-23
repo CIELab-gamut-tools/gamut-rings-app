@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <H1 class="title">Gamut Rings Explorer</H1>
+    <h1 class="title">Gamut Rings Explorer</h1>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition />
     </div>
