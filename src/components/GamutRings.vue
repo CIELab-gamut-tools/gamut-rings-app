@@ -74,9 +74,9 @@
         if (!gl || !gamut) return;
         this.ringData = rings(gamut, [10,'::',10,100]);
         console.log(`rings calc took ${performance.now()-start}ms`)
-        const [a,b] = this.ringData;
         wgl.clear(gl);
-        const x=[...a], y=[...b], data=this.arrays.rings;
+        const [x,y] = this.ringData;
+        const data=this.arrays.rings;
         for (let i=0, j=2; i<3600; i++){
           data[j++]=(x[i])/1000;
           data[j++]=(y[i])/1000;
@@ -125,14 +125,14 @@
        <path d="M-1000,-1000H1000V1000H-1000Z" stroke="black" stroke-width="10" fill="none"/>
        <path d="M-900,0H900" stroke="#888" stroke-width="3" fill="none"/>
        <path d="M0,-900V900" stroke="#888" stroke-width="3" fill="none"/>
-       <line v-for="i of 19" :x1="(i-10)*100" :x2="(i-10)*100" y1="-1000" y2="-980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :x1="(i-10)*100" :x2="(i-10)*100" y1="1000" y2="980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :y1="(i-10)*100" :y2="(i-10)*100" x1="1000" x2="980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :y1="(i-10)*100" :y2="(i-10)*100" x1="-1000" x2="-980" stroke-width="3" stroke="black"/>
-       <text v-for="i of 9" :x="(i-5)*200" y="970" class="x-axis-labels">{{ (i-5)*200}}</text>
-       <text v-for="i of 9" :x="(i-5)*200" y="-920" class="x-axis-labels">{{ (5-i)*200}}</text>
-       <text v-for="i of 9" :y="(i-5)*200+25" x="-970" class="y-axis-labels">{{ (5-i)*200}}</text>
-       <text v-for="i of 9" :y="(i-5)*200+25" x="970" class="y-axis-labels" text-anchor="end">{{ (i-5)*200}}</text>
+       <line v-for="i of 19" :key=i :x1="(i-10)*100" :x2="(i-10)*100" y1="-1000" y2="-980" stroke-width="3" stroke="black"/>
+       <line v-for="i of 19" :key=i :x1="(i-10)*100" :x2="(i-10)*100" y1="1000" y2="980" stroke-width="3" stroke="black"/>
+       <line v-for="i of 19" :key=i :y1="(i-10)*100" :y2="(i-10)*100" x1="1000" x2="980" stroke-width="3" stroke="black"/>
+       <line v-for="i of 19" :key=i :y1="(i-10)*100" :y2="(i-10)*100" x1="-1000" x2="-980" stroke-width="3" stroke="black"/>
+       <text v-for="i of 9" :key=i :x="(i-5)*200" y="970" class="x-axis-labels">{{ (i-5)*200}}</text>
+       <text v-for="i of 9" :key=i :x="(i-5)*200" y="-920" class="x-axis-labels">{{ (5-i)*200}}</text>
+       <text v-for="i of 9" :key=i :y="(i-5)*200+25" x="-970" class="y-axis-labels">{{ (5-i)*200}}</text>
+       <text v-for="i of 9" :key=i :y="(i-5)*200+25" x="970" class="y-axis-labels" text-anchor="end">{{ (i-5)*200}}</text>
        <text x="-250" y="840" class="label">a</text>
        <text x="-200" y="820" class="label-script">*</text>
        <text x="-200" y="880" class="label-script">RSS</text>

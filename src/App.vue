@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <H1 class="title">Gamut Rings Explorer</H1>
+    <h1 class="title">Gamut Rings Explorer</h1>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition />
     </div>
@@ -114,7 +114,9 @@ export default {
     });
     const gamut = ref(null);
     watchEffect(()=>{
+      const start = performance.now();
       gamut.value = makeSynthetic(gamutDefinition.value);
+      console.log(`synth calc took ${performance.now()-start}ms`);
     })
     return {
       gamut,
