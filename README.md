@@ -6,6 +6,7 @@ This is a single page, single file, HTML app designed to allow the exploration o
 - Built using [Vue3](https://vuejs.org/) and [Vite](https://vitejs.dev/)
 - Calculations using the [t-matrix](https://github.com/euan-smith/t-matrix) library plus hand-optimised inner loops.
 - Rendered using webgl2
+A built version of the app can be accessed at [https://cielab-gamut-tools.github.io/gamut-rings-app/](https://cielab-gamut-tools.github.io/gamut-rings-app/)
 
 ## Run a dev server
 
