@@ -20,3 +20,10 @@ npm run build
 ```
 
 Produces dist/index.html.  This file can be opened anywhere
+
+## References
+
+- Original Gamut Rings concept: [K. Masaoka, F. Jiang, M. D. Fairchild, and R. L. Heckaman,
+SID Digest, Volume 49, Issue 1, May 2018, 1048-1051](https://doi.org/10.1002/sdtp.12187)
+- Calculation based on: [E. Smith, R. L. Heckaman, K. Lang, J. Penczek, J. Bergquist,
+JSID, Volume 28, Issue 6, June 2020, 548-556.](https://doi.org/10.1002/jsid.918)
