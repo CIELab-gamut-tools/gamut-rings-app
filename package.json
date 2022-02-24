@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "publish":"copyfiles dist/index.html docs/index.html"
   },
   "dependencies": {
     "gamutjs": "^0.1.0",
@@ -11,6 +12,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
+    "copyfiles": "^2.4.1",
     "rollup-plugin-web-worker-loader": "^1.6.1",
     "vite": "^2.6.4",
     "vite-plugin-singlefile": "^0.5.1"
