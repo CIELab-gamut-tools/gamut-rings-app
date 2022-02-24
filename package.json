@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "publish":"copyfiles dist/index.html docs/index.html"
+    "publish":"copyfiles -f dist/index.html docs"
   },
   "dependencies": {
     "gamutjs": "^0.1.0",
