@@ -5,6 +5,7 @@
       <synthetic-gamut-editor v-model:definition=gamutDefinition />
     </div>
     <chromaticity class="plot" v-model:definition="gamutDefinition" />
+    <cie-lab class=cielab :gamut=gamut />
     <gamut-rings class="rings" :gamut=gamut />
     <div class="footer">
       <p>Original Gamut Rings concept: <a href="https://doi.org/10.1002/sdtp.12187">K. Masaoka, F. Jiang, M. D. Fairchild, and R. L. Heckaman,
@@ -29,10 +30,11 @@
 }
 .main{
   display:grid;
-  grid-template: 60px 4fr 2fr 120px/4fr 0fr 6fr;
+  grid-template: 60px 4fr 2fr 120px/4fr 6fr 6fr;
   width:100%;
   min-width:940px;
-  max-width:calc(154vh - 278px);
+  /* max-width:calc(154vh - 278px); */
+  max-width:calc(216vh - 278px);
   height:100%;
 }
 .table{
@@ -50,21 +52,29 @@
   grid-area: 2/3/4/4;
   width:100%;
 }
+.cielab{
+  grid-area: 2/2/4/3;
+  width: 100%;
+}
 
 /*
 The app layout will look like this:
-+-------------+------------------+-------------- = ------------+
-|             |                  |                             |
-|             |                  |                             |
++-1/1---------+------------------+-------------- = ------------+
+60px     1/1/2/4          Title                                |
++-2/1---------+-2/2--------------+-2/3---------- = --------2/4-+
+|    2/1      |                  |   2/3/4/4                   |
+4f            |                  |                             |
 | CIE1931     |                  |                             |
 |             |                  |                             |
-|             |                  |                             |
-|-------------+                  +                             +
-|             |                  |                             |
+|             |     CIELAB       |                             |
+|-3/1---------+                  +         RINGS               +
+2f   3/1      |                  |                             |
 | Primary     |                  |                             |
 | table       |                  |                             |
 |             |                  |                             |
-+-----4f------+--------2f---------+-------------- 6f------------+
++-4/1---------+--------------4/3-+-------------- = --------4/4-+
+120px    4/1/5/4          References                           |
++-----4f------+--------6f--------+-------------- 6f--------5/4-+
 
 
 
@@ -94,6 +104,7 @@ div.square>canvas{
 import SyntheticGamutEditor from "./components/SyntheticGamutEditor.vue";
 import GamutRings from "./components/GamutRings.vue";
 import Chromaticity from "./components/Chromaticity.vue";
+import CieLab from "./components/CIELab.vue";
 import {makeSynthetic} from './gamut';
 import {ref, watchEffect} from 'vue';
 export default {
@@ -101,7 +112,8 @@ export default {
   components: {
     SyntheticGamutEditor,
     GamutRings,
-    Chromaticity
+    Chromaticity,
+    CieLab
   },
   setup(){
     const gamutDefinition = ref({

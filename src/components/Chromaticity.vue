@@ -4,6 +4,7 @@
 
 <script>
 import cie1931 from '../gamut/cie1931.json';
+import {chords} from './utils.js';
 const SIZE=500;
 export default {
   name: "Chromaticity",
@@ -124,13 +125,6 @@ export default {
       ctx.strokeRect(white[0]*SIZE-5, (1-white[1])*SIZE-5, 10,10);
     }
   }
-}
-
-function chords(evt){
-  const {clientX, clientY, target:{clientWidth, clientHeight}} = evt;
-  const {left,top} = evt.target.getBoundingClientRect();
-  const x=(clientX-left)/clientWidth, y=1-(clientY-top)/clientHeight;
-  return [x,y];
 }
 
 function filledColouredXY(ctx,[x,y]){
