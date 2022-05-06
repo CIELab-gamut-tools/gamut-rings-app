@@ -142,18 +142,13 @@ export default {
 };
 </script>
 <template>
-  <div class=container>
+ <div>
     <div class=square>
     <canvas ref="canv" width=500 height=500 @mousedown=mouseDown @mouseup=mouseUp @mousemove=mouseMove @mouseleave=mouseLeave />
+    <div class=indicators>
+      rotation {{rot.toFixed(0)}}°, tilt {{tip.toFixed(0)}}°
     </div>
-    <div class=button-bar>
-      <button @click="setRot(rot+10)">&#8618;</button>
-      <span>{{rot}}</span>
-      <button @click="setRot(rot-10)">&#8617;</button>
-      <button @click="setTip(tip+10)">&uarr;</button>
-      <span>{{tip}}</span>
-      <button @click="setTip(tip-10)">&darr;</button>
-    </div>  
+    </div>
   </div>
 </template>
 <style scoped>
@@ -196,5 +191,11 @@ div.square canvas{
   left:0;
   bottom:0;
   right:0;
+}
+div.square .indicators{
+  position:absolute;
+  left:0.5em;
+  bottom:0.5em;
+  color: white;
 }
 </style>

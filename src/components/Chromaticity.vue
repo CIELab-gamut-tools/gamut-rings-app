@@ -6,6 +6,7 @@
 import cie1931 from '../gamut/cie1931.json';
 import {chords} from './utils.js';
 const SIZE=500;
+const STRETCH=1.18;
 export default {
   name: "Chromaticity",
   props:{
@@ -44,7 +45,7 @@ export default {
   methods:{
     mousedown(evt){
       evt.preventDefault();
-      let [x,y] = chords(evt);
+      let [x,y] = chords(evt,STRETCH);
       if (!this.focus) return;
       this.down=true;
       this.point = this.focus;
@@ -57,7 +58,7 @@ export default {
     },
     mousemove(evt){
       evt.preventDefault();
-      let [x,y] = chords(evt);
+      let [x,y] = chords(evt,STRETCH);
       if (this.down){
         this.point[0]=x;
         this.point[1]=y;
@@ -99,37 +100,37 @@ export default {
       ctx.beginPath();
       ctx.strokeStyle='black';
       for (let [wl,X,Y,Z] of cie1931){
-        const t=X+Y+Z, x=X/t, y=1-Y/t;
+        const t=X+Y+Z, x=X/t, y=Y/t;
         if (wl === cie1931[0][0]){
-          ctx.moveTo(x*SIZE,y*SIZE);
-        } else ctx.lineTo(x*SIZE,y*SIZE);
+          ctx.moveTo(x*SIZE*STRETCH,(1-y*STRETCH)*SIZE);
+        } else ctx.lineTo(x*SIZE*STRETCH,(1-y*STRETCH)*SIZE);
       }
       ctx.stroke();
       ctx.beginPath();
       ctx.strokeStyle='#444';
       const {RGBxy, white} = this.definition;
-      ctx.moveTo(RGBxy[0][0]*SIZE,(1-RGBxy[0][1])*SIZE);
-      ctx.lineTo(RGBxy[1][0]*SIZE,(1-RGBxy[1][1])*SIZE);
-      ctx.lineTo(RGBxy[2][0]*SIZE,(1-RGBxy[2][1])*SIZE);
-      ctx.lineTo(RGBxy[0][0]*SIZE,(1-RGBxy[0][1])*SIZE);
-      ctx.lineTo(white[0]*SIZE,(1-white[1])*SIZE);
-      ctx.lineTo(RGBxy[1][0]*SIZE,(1-RGBxy[1][1])*SIZE);
-      ctx.moveTo(white[0]*SIZE,(1-white[1])*SIZE);
-      ctx.lineTo(RGBxy[2][0]*SIZE,(1-RGBxy[2][1])*SIZE);
+      ctx.moveTo(RGBxy[0][0]*SIZE*STRETCH,(1-RGBxy[0][1]*STRETCH)*SIZE);
+      ctx.lineTo(RGBxy[1][0]*SIZE*STRETCH,(1-RGBxy[1][1]*STRETCH)*SIZE);
+      ctx.lineTo(RGBxy[2][0]*SIZE*STRETCH,(1-RGBxy[2][1]*STRETCH)*SIZE);
+      ctx.lineTo(RGBxy[0][0]*SIZE*STRETCH,(1-RGBxy[0][1]*STRETCH)*SIZE);
+      ctx.lineTo(white[0]*SIZE*STRETCH,(1-white[1]*STRETCH)*SIZE);
+      ctx.lineTo(RGBxy[1][0]*SIZE*STRETCH,(1-RGBxy[1][1]*STRETCH)*SIZE);
+      ctx.moveTo(white[0]*SIZE*STRETCH,(1-white[1]*STRETCH)*SIZE);
+      ctx.lineTo(RGBxy[2][0]*SIZE*STRETCH,(1-RGBxy[2][1]*STRETCH)*SIZE);
       ctx.stroke();
-      if (this.focus) ctx.strokeRect(this.focus[0]*SIZE-10, (1-this.focus[1])*SIZE-10, 20,20);
+      if (this.focus) ctx.strokeRect(this.focus[0]*SIZE*STRETCH-10, (1-this.focus[1]*STRETCH)*SIZE-10, 20,20);
       filledColouredXY(ctx,RGBxy[0]);
       filledColouredXY(ctx,RGBxy[1]);
       filledColouredXY(ctx,RGBxy[2]);
       filledColouredXY(ctx,white);
-      ctx.strokeRect(white[0]*SIZE-5, (1-white[1])*SIZE-5, 10,10);
+      ctx.strokeRect(white[0]*SIZE*STRETCH-5, (1-white[1]*STRETCH)*SIZE-5, 10,10);
     }
   }
 }
 
 function filledColouredXY(ctx,[x,y]){
   ctx.fillStyle = getFillStyleFromXY([x,y]);
-  ctx.fillRect(x*SIZE-5, (1-y)*SIZE-5, 10, 10);
+  ctx.fillRect(x*SIZE*STRETCH-5, (1-y*STRETCH)*SIZE-5, 10, 10);
 }
 
 function getFillStyleFromXY([x,y]){

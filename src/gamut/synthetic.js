@@ -56,6 +56,7 @@ export function makeSynthetic(name, options){
   let gammaFn = typeof gamma === 'function' ? gamma : v=>Math.pow(v,gamma);
 
   let dfs = from([driveMapping([1,1,1])])
+  console.log('dfs',dfs); window.dfs=dfs;
   if (colorantXYZ){
     colorantXYZ = from(colorantXYZ);
   }else{
@@ -65,8 +66,9 @@ export function makeSynthetic(name, options){
     let RGBnXYZ = xy2XYZ(from(RGBxy));
     let Lrgb = div(whiteXYZ,RGBnXYZ);
     colorantXYZ = product(RGBnXYZ, Lrgb.t);
-    if (dfs.length>3){
-      colorantXYZ = vcat([colorantXYZ, whiteXYZ])
+    if (dfs.size[1]>3){
+      colorantXYZ = vcat(colorantXYZ, whiteXYZ)
+      console.log('col',colorantXYZ);
     }
   }
   let XYZn = mult(dfs,colorantXYZ);

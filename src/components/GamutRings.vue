@@ -117,6 +117,7 @@
             gl.drawElements(gl.LINE_LOOP, 360, gl.UNSIGNED_SHORT, 0);
           }
         }
+        this.$emit('cgv',{cgv:this.ringData[3]})
         gl.flush();
         console.log(`Rings render took ${performance.now()-rcalc}ms`);
         await new Promise(requestAnimationFrame);
@@ -131,10 +132,7 @@
 </script>
 
 <template>
- <div>
-   <p>
-     Gamut volume = {{ringData && ringData[3].toFixed(0)}}
-   </p>
+<div>
    <div class="square">
      <svg viewBox="-1000 -1000 2000 2000">
        <path d="M-1000,-1000H1000V1000H-1000Z" stroke="black" stroke-width="10" fill="none"/>
@@ -157,7 +155,7 @@
      </svg>
      <canvas ref="canv"></canvas>
    </div>
- </div>
+  </div>
 </template>
 
 <style scoped>
