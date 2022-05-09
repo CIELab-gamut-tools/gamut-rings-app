@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1 class="title">Gamut Rings Explorer</h1>
+    <div class="title">Gamut Rings Explorer</div>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition />
     </div>
@@ -15,33 +15,41 @@
         </a></p>
       <p> &copy;2021 Euan Smith. Licensed under the <a href="https://opensource.org/licenses/MIT">MIT</a> licence - distribute and use freely! Find me on <a href="https://github.com/euan-smith">github</a></p>
     </div>
-    <div class=volume>
-      <h2 class=message v-if=cgv>VOLUME = {{cgv.toFixed(0)}} &#916;E&#179;</h2>
-    </div>
+    <div class=volume>VOLUME = {{displayCGV}} &#916;E&#179;</div>
   </div>
 </template>
 
 <style>
+html{
+    font-size:1vw;
+  line-height: 1.1vw;
+}
+
 .title{
   grid-area:1/1/2/4;
+  max-width:100%;
+  max-height:100%;
+  font-size: 2.5vw;
+  font-weight: bold;
+  margin:auto;
 }
 .footer{
-  grid-area: 4/1/5/4;
+  grid-area: 5/2/6/4;
   white-space: nowrap;
   overflow: hidden;
   max-width:100%;
 }
 .main{
   display:grid;
-  grid-template: 80px 4fr 2fr 120px/4fr 6fr 6fr;
-  width:100%;
-  min-width:940px;
-  /* max-width:calc(154vh - 278px); */
-  max-width:calc(216vh - 278px);
-  height:100%;
+  grid-template: 1fr 9fr 3fr 1fr 2.6fr/8fr 12fr 12fr;
+  width:calc(100vw - 20px);
+  height:calc((100vw - 20px) * 0.52);
+  justify-content: center;
+  align-content: center;
+  gap: 5px;
 }
 .table{
-  grid-area: 3/1;
+  grid-area: 3/1/6/2;
   width:100%;
 }
 .table>table{
@@ -61,15 +69,11 @@
 }
 .volume{
   position:relative;
-  grid-area: 2/2/4/4;
-  width:100%;
-  height:100%;
-}
-.volume>.message{
-  position:absolute;
-  bottom:0.5em;
-  left:50%;
-  transform: translate(-50%,0);
+  grid-area: 4/2/5/4;
+  max-width:100%;
+  max-height:100%;
+  margin:auto;
+  font-size:2vw;
 }
 
 /*
@@ -90,6 +94,25 @@ The app layout will look like this:
 +-4/1---------+--------------4/3-+-------------- = --------4/4-+
 120px    4/1/5/4          References                           |
 +-----4f------+--------6f--------+-------------- 6f--------5/4-+
+
+new layout, based on 16:9 ratio
+1-----4fr------2----------6fr----------3----------6fr----------4
+|  1124               TITLE                                    | .5fr
+2--------------+-----------------------+-----------------------+
+|              |                       |                       |
+|   2132       |      2243             |     2344              |
+|              |                       |                       | 4.5fr
+|   Chrom      |                       |                       |
+|              |      CIELAB           |      RINGS            |
+|              |                       |                       |
+3--------------+                       +                       +
+|              |                       |                       | 1.5fr
+4   3162       +-----------------------+-----------------------+
+|              |   4254      Volume Result                     | .5fr
+5   Table      +-----------------------+-----------------------+
+|              |   5264     References                         | 2fr
+|              |                                               |
+6--------------+-----------------------------------------------+
 
 
 
@@ -121,7 +144,7 @@ import GamutRings from "./components/GamutRings.vue";
 import Chromaticity from "./components/Chromaticity.vue";
 import CieLab from "./components/CIELab.vue";
 import {makeSynthetic} from './gamut';
-import {ref, watchEffect} from 'vue';
+import {ref, watchEffect, computed} from 'vue';
 export default {
   name: 'App',
   components: {
@@ -142,6 +165,7 @@ export default {
     });
     const gamut = ref(null);
     const cgv = ref(0);
+    const displayCGV = computed(()=>parseFloat(cgv.value.toPrecision(3)).toFixed(0))
     watchEffect(()=>{
       const start = performance.now();
       const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.min(...v)];
@@ -152,7 +176,8 @@ export default {
       log:(e)=>console.log(e),
       gamut,
       gamutDefinition,
-      cgv
+      cgv,
+      displayCGV
     }
   },
 }

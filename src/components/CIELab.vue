@@ -48,12 +48,12 @@ export default {
       evt.preventDefault();
       this.down=true;
       this.onDown=[this.rot,this.tip];
-      this.pos = chords(evt);
+      this.pos = chords(evt,1);
     },
     mouseMove(evt){
       if (!this.down) return;
       evt.preventDefault();
-      let [x,y] = chords(evt);
+      let [x,y] = chords(evt,1);
       this.setRot(this.onDown[0]+(x-this.pos[0])*180);
       this.setTip(this.onDown[1]-(y-this.pos[1])*180);
       this.render()

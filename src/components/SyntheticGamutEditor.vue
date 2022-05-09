@@ -79,7 +79,7 @@
 </script>
 
 <template>
-  <table>
+  <table ref=root>
     <tr>
       <th>Colour</th>
       <th>CIE1931 x</th>
@@ -131,19 +131,20 @@
 <style scoped>
 table{
   border:none;
+  font-size:1.2vw;
 }
 td{
-  padding:0 .5rem;
+  padding:0 0.5vw;
   line-height: 1;
 }
 td input{
-  width:100px;
+  width:6.6vw;
   margin:auto;
   background:transparent;
   border:none;
 }
 td select{
-  width:100px;
+  width:6.6vw;
   margin:auto;
   background:transparent;
   border:none;
