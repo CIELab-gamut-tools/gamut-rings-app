@@ -67,6 +67,34 @@ function isBuiltIn(info) {
   return name.startsWith("gl_") || name.startsWith("webgl_");
 }
 
+const lab3DVertex=`
+attribute vec4 a_position;
+uniform mat4 u_matrix;
+varying vec4 v_color;
+void main() {
+  // Multiply the position by the matrix.
+  gl_Position = u_matrix * a_position;
+  // From the position (a*,b*,L*) get the colour
+  float fY = (a_position.x + 16.0) / 116.0; 
+  float fX = a_position.y/500.0+fY;
+  float fZ = fY-a_position.z/200.0;
+  vec3 XYZ = vec3(0.0);
+  if (fX>0.207) XYZ.x=fX*fX*fX; else XYZ.x=fX*0.12842-0.017713;
+  if (fY>0.207) XYZ.y=fY*fY*fY; else XYZ.y=fY*0.12842-0.017713;
+  if (fZ>0.207) XYZ.z=fZ*fZ*fZ; else XYZ.z=fZ*0.12842-0.017713;
+  XYZ *= vec3(0.9504559, 1.0, 1.0890578);
+  vec3 RGB = sqrt(clamp(mat3(3.2404, -0.9692, 0.0557, -1.5371, 1.8760, -0.2040, -0.4985, 0.0415, 1.0572)*XYZ,0.0,1.0));
+  v_color=vec4(RGB,1.0);
+}`;
+
+const simpleColourFragment=`
+precision mediump float;
+varying vec4 v_color;
+void main() {
+   gl_FragColor = v_color;
+}
+`
+
 const simple2DVertex="attribute vec4 a_position;void main(){gl_Position = a_position;}";
 const fixedColourFragment="precision mediump float;uniform vec4 u_col;void main(){gl_FragColor=u_col;}";
 
@@ -92,5 +120,6 @@ void main(){
 }`;
 const programs={
   fixedColour:[simple2DVertex,fixedColourFragment],
-  varColour:[simple2DVertex, varColourFragment]
+  varColour:[simple2DVertex, varColourFragment],
+  cieLab:[lab3DVertex, simpleColourFragment]
 }

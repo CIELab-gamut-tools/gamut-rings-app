@@ -46,15 +46,7 @@ const REFS = {
   },
 }
 
-let t=0;
-function timer(name){
-  const n = performance.now();
-  //if(name)console.log(name, n-t);
-  t=n;
-}
-
 export function makeSynthetic(name, options){
-  timer();
   if (typeof name === "string"){
     options = Object.assign({},REFS.default,REFS[name.toLowerCase()],options);
   } else {
@@ -64,6 +56,7 @@ export function makeSynthetic(name, options){
   let gammaFn = typeof gamma === 'function' ? gamma : v=>Math.pow(v,gamma);
 
   let dfs = from([driveMapping([1,1,1])])
+  console.log('dfs',dfs); window.dfs=dfs;
   if (colorantXYZ){
     colorantXYZ = from(colorantXYZ);
   }else{
@@ -73,11 +66,11 @@ export function makeSynthetic(name, options){
     let RGBnXYZ = xy2XYZ(from(RGBxy));
     let Lrgb = div(whiteXYZ,RGBnXYZ);
     colorantXYZ = product(RGBnXYZ, Lrgb.t);
-    if (dfs.length>3){
-      colorantXYZ = vcat([colorantXYZ, whiteXYZ])
+    if (dfs.size[1]>3){
+      colorantXYZ = vcat(colorantXYZ, whiteXYZ)
+      console.log('col',colorantXYZ);
     }
   }
-  timer('init')
   let XYZn = mult(dfs,colorantXYZ);
   let blackXYZ=zeros(1,3);
   if (blackRatio){
@@ -88,21 +81,13 @@ export function makeSynthetic(name, options){
   }
 
   let RGB = makeTesselation(from([0,':',steps]),true);
-  timer('tess')
   // there isn't a unique function yet in t-matrix, so here is a DIY
   const s1 = steps+1;
   RGB = from([...new Map([...rows(RGB)].map(([r,g,b])=>[r+s1*(g+s1*b),[r,g,b]])).values()]);
-  timer('unique')
   //now rescale RGB to be 0-1
   RGB = RGB.map(v=>v/steps);
-  timer('map')
   let RGBsig = RGB.map(gammaFn);
-  timer('gamma')
   let RGBdrive = from([...rows(RGBsig)].map(driveMapping));
-  timer('drive')
   let XYZ = sum(mult(RGBdrive,colorantXYZ),blackXYZ);
-  timer('black')
-  const rtn = fromXYZ({RGB, XYZ});
-  timer('fromXYZ')
-  return rtn;
+  return fromXYZ({RGB, XYZ});
 }

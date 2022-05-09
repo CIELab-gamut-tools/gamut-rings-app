@@ -17,6 +17,8 @@
         buffers:{},
         arrays:{},
         ringData:null,
+        rendering:false,
+        rerender:false,
       }
     },
     mounted(){
@@ -68,12 +70,18 @@
       }
     },
     methods:{
-      render(){
+      async render(){
+        if (this.rendering){
+          this.rerender = true;
+          return;
+        }
+        this.rendering = true;        
         const start=performance.now();
         const {gl, programs, gamut} = this;
         if (!gl || !gamut) return;
         this.ringData = rings(gamut, [10,'::',10,100]);
-        console.log(`rings calc took ${performance.now()-start}ms`)
+        const rcalc = performance.now();
+        console.log(`rings calc took ${rcalc-start}ms`)
         wgl.clear(gl);
         const [x,y] = this.ringData;
         const data=this.arrays.rings;
@@ -109,17 +117,22 @@
             gl.drawElements(gl.LINE_LOOP, 360, gl.UNSIGNED_SHORT, 0);
           }
         }
+        this.$emit('cgv',{cgv:this.ringData[3]})
         gl.flush();
+        console.log(`Rings render took ${performance.now()-rcalc}ms`);
+        await new Promise(requestAnimationFrame);
+        this.rendering = false;
+        if (this.rerender){
+          this.rerender = false;
+          return this.render();
+        }
       }
     },
   }
 </script>
 
 <template>
- <div>
-   <p>
-     Gamut volume = {{ringData && ringData[3].toFixed(0)}}
-   </p>
+<div>
    <div class="square">
      <svg viewBox="-1000 -1000 2000 2000">
        <path d="M-1000,-1000H1000V1000H-1000Z" stroke="black" stroke-width="10" fill="none"/>
@@ -142,7 +155,7 @@
      </svg>
      <canvas ref="canv"></canvas>
    </div>
- </div>
+  </div>
 </template>
 
 <style scoped>
