@@ -1,4 +1,5 @@
-import {from, gridInterp1, cumsum, sum, vcat, zeros, product, min, max, reshape} from "t-matrix";
+import {from, gridInterp1, cumsum, sum, vcat,
+  zeros, product, min, max, mapMany} from "t-matrix";
 
 let t=0;
 function timer(name){
@@ -30,13 +31,28 @@ export function rings(g,Ls,refCssC){
   timer('vcat');
   const cssC = gridInterp1(cssChromAll, Ls);
   if (refCssC){
+    /*
+      Work out the offset cssC
+      the volume gets offset, and that is proportional to cssC^2
+      so, cssC squared, get the diff, square the ref, and apply as an offset
 
+      so, if cssC2 = cssC.^2, and refCssC2 = refCssC.^2
+      IcssC2(0) = cssC2(0)
+      IcssC2(n) = cssC2(n) - cssC2(n-1) + refCssC2(n-1)
+     */
+    const offsetCssC = mapMany(
+        cssC.get([1,':'],':'),
+        cssC.get([':',-2],':'),
+        refCssC.get([':',-2],':'),
+        (n,p,r)=>Math.sqrt(n*n - p*p + r*r)
+    )
+    cssC.set([1, ':'],':',offsetCssC);
   }
   const ang = from([[dH/2,'::',dH,2*Math.PI]]);
   const cssA = product(ang.map(Math.sin),cssC);
   const cssB = product(ang.map(Math.cos),cssC);
   timer('a&b calcs');
-  return [cssA[DATA], cssB[DATA], cssC[DATA], sum(volMap)];
+  return [cssA[DATA], cssB[DATA], cssC, sum(volMap)];
 }
 
  function ringsSVG(g,{

@@ -92,6 +92,7 @@ const Ls = [10,'::',10,100];
           if (this.refObj !== refGamut){
             this.refRingData = rings(refGamut, Ls)
           }
+          console.log(this.refRingData);
           this.ringData = rings(gamut, Ls, this.refRingData[2]);
         } else {
           this.ringData = rings(gamut, Ls);
