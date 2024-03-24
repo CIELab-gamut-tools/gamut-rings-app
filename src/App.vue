@@ -6,7 +6,7 @@
     </div>
     <chromaticity class="plot" v-model:definition="gamutDefinition" />
     <cie-lab class=cielab :gamut=gamut />
-    <gamut-rings class="rings" :gamut=gamut @cgv="e=>cgv=e.cgv"/>
+    <gamut-rings class="rings" :gamut=gamut :refGamut="refGamut" @cgv="e=>cgv=e.cgv"/>
     <div class="footer">
       <p>Original Gamut Rings concept: <a href="https://doi.org/10.1002/sdtp.12187">K. Masaoka, F. Jiang, M. D. Fairchild, and R. L. Heckaman,
         SID Digest, Volume 49, Issue 1, May 2018, 1048-1051</a></p>
@@ -145,6 +145,8 @@ import Chromaticity from "./components/Chromaticity.vue";
 import CieLab from "./components/CIELab.vue";
 import {makeSynthetic} from './gamut';
 import {ref, watchEffect, computed} from 'vue';
+import {REFS, WHITES} from "./gamut/refs";
+
 export default {
   name: 'App',
   components: {
@@ -154,27 +156,34 @@ export default {
     CieLab
   },
   setup(){
+    const {srgb} = REFS;
+    const RGBxy = JSON.parse(JSON.stringify(srgb.RGBxy));
     const gamutDefinition = ref({
-      RGBxy:[
-        [.64, .33],
-        [.3, .6],
-        [.15, .06],
-      ],
-      white: [.3127, .3290],
-      whiteBoost:0
+      RGBxy,
+      white: [...WHITES.D65],
+      whiteBoost:0,
+      REF: null
     });
     const gamut = ref(null);
+    const refGamut = ref(null);
+    let refGamutName = null;
     const cgv = ref(0);
     const displayCGV = computed(()=>parseFloat(cgv.value.toPrecision(3)).toFixed(0))
     watchEffect(()=>{
       const start = performance.now();
       const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.min(...v)];
       gamut.value = makeSynthetic({...gamutDefinition.value, driveMapping});
+      if (gamutDefinition.value.REF !== refGamutName){
+        refGamutName = gamutDefinition.value.REF;
+        refGamut.value = refGamutName && makeSynthetic(refGamutName);
+        console.log(`ref changed to ${refGamutName}`, refGamut.value);
+      }
       console.log(`synth calc took ${performance.now()-start}ms`);
     })
     return {
       log:(e)=>console.log(e),
       gamut,
+      refGamut,
       gamutDefinition,
       cgv,
       displayCGV

@@ -1,5 +1,6 @@
 
 <script>
+const Ls = [10,'::',10,100];
   import {rings} from '../gamut';
   import * as wgl from './wgl';
   export default {
@@ -8,6 +9,9 @@
       gamut:{
         type:Object,
         required:true,
+      },
+      refGamut:{
+        required:false,
       }
     },
     data(){
@@ -19,6 +23,8 @@
         ringData:null,
         rendering:false,
         rerender:false,
+        refObj:null,
+        refRingData:null,
       }
     },
     mounted(){
@@ -67,6 +73,9 @@
     watch:{
       gamut(){
         this.render();
+      },
+      refGamut(){
+        this.render();
       }
     },
     methods:{
@@ -77,9 +86,16 @@
         }
         this.rendering = true;        
         const start=performance.now();
-        const {gl, programs, gamut} = this;
+        const {gl, programs, gamut, refGamut} = this;
         if (!gl || !gamut) return;
-        this.ringData = rings(gamut, [10,'::',10,100]);
+        if (refGamut){
+          if (this.refObj !== refGamut){
+            this.refRingData = rings(refGamut, Ls)
+          }
+          this.ringData = rings(gamut, Ls, this.refRingData[2]);
+        } else {
+          this.ringData = rings(gamut, Ls);
+        }
         const rcalc = performance.now();
         console.log(`rings calc took ${rcalc-start}ms`)
         wgl.clear(gl);

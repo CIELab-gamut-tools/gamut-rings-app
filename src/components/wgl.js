@@ -48,7 +48,7 @@ export function makeProgram(gl, vSource, fSource){
       let name = uniformInfo.name;
       // remove the array suffix.
       if (name.endsWith("[0]")) {
-        name = name.substr(0, name.length - 3);
+        name = name.slice(0, name.length - 3);
       }
       uniforms[name] = gl.getUniformLocation(program, uniformInfo.name);
     }
@@ -84,7 +84,7 @@ void main() {
   if (fZ>0.207) XYZ.z=fZ*fZ*fZ; else XYZ.z=fZ*0.12842-0.017713;
   XYZ *= vec3(0.9504559, 1.0, 1.0890578);
   vec3 RGB = sqrt(clamp(mat3(3.2404, -0.9692, 0.0557, -1.5371, 1.8760, -0.2040, -0.4985, 0.0415, 1.0572)*XYZ,0.0,1.0));
-  v_color=vec4(RGB,1.0);
+  v_color=vec4(RGB,0.5);
 }`;
 
 const simpleColourFragment=`

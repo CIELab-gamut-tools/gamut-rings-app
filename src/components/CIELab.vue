@@ -102,29 +102,30 @@ export default {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(gamut.LAB), gl.DYNAMIC_DRAW);
       const rot = (-this.rot-90)/180*Math.PI;
       const tip = (this.tip+90)/180*Math.PI;
-      gl.uniformMatrix4fv(u_matrix,false,new Float32Array(
-        Matrix.mult(
-          Matrix.from([
-            [1,0,0,0],
-            [0,1,0,0],
-            [0,0,1,0],
-            [-50,0,0,1]
-          ]),Matrix.from([
-            [1,0,0,0],
-            [0,Math.cos(-rot), Math.sin(-rot), 0],
-            [0,-Math.sin(-rot), Math.cos(-rot), 0],
-            [0, 0, 0, 1]            
-          ]),Matrix.from([
-            [Math.cos(tip), Math.sin(tip), 0, 0],
-            [-Math.sin(tip), Math.cos(tip), 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1]
-          ]),Matrix.from([
-            [0,0,0.001,0],
-            [0,0.005,0,0],
-            [0.005,0,0,0],
-            [0,0,0,1]
-          ]))));
+      const viewMatrix = new Float32Array(
+          Matrix.mult(
+              Matrix.from([
+                [1,0,0,0],
+                [0,1,0,0],
+                [0,0,1,0],
+                [-50,0,0,1]
+              ]),Matrix.from([
+                [1,0,0,0],
+                [0,Math.cos(-rot), Math.sin(-rot), 0],
+                [0,-Math.sin(-rot), Math.cos(-rot), 0],
+                [0, 0, 0, 1]
+              ]),Matrix.from([
+                [Math.cos(tip), Math.sin(tip), 0, 0],
+                [-Math.sin(tip), Math.cos(tip), 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
+              ]),Matrix.from([
+                [0,0,0.001,0],
+                [0,0.005,0,0],
+                [0.005,0,0,0],
+                [0,0,0,1]
+              ])))
+      gl.uniformMatrix4fv(u_matrix,false,viewMatrix);
       gl.enableVertexAttribArray(a_position);
       gl.vertexAttribPointer(a_position, 3, gl.FLOAT, false, 0, 0);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,this.buffers.tri);

@@ -3,11 +3,11 @@ import {from, gridInterp1, cumsum, sum, vcat, zeros, product, min, max, reshape}
 let t=0;
 function timer(name){
   const n = performance.now();
-  //if(name)console.log(name, n-t);
+  if(name)console.log(name, n-t);
   t=n;
 }
 
-export function rings(g,Ls){
+export function rings(g,Ls,refCssC){
   timer();
   const dH = 2*Math.PI/g.hsteps;
   const dL = 100/g.Lsteps;
@@ -29,9 +29,13 @@ export function rings(g,Ls){
   const cssChromAll = vcat(zeros(1,g.hsteps),cumsum(volMap).map(v=>Math.sqrt(2*v/dH)));
   timer('vcat');
   const cssC = gridInterp1(cssChromAll, Ls);
+  if (refCssC){
+
+  }
   const ang = from([[dH/2,'::',dH,2*Math.PI]]);
   const cssA = product(ang.map(Math.sin),cssC);
   const cssB = product(ang.map(Math.cos),cssC);
+  timer('a&b calcs');
   return [cssA[DATA], cssB[DATA], cssC[DATA], sum(volMap)];
 }
 
