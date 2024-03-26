@@ -19,7 +19,6 @@
         updating:false,
         white:'D65',
         ref:'none',
-        doIntersect:false
       }
     },
     watch:{
@@ -44,17 +43,9 @@
         deep:true
       },
       ref(){
-        this.updateRef()
+        this.definition.REF = this.ref!=='none' ? this.ref: null
       },
-      doIntersect(){
-        this.updateRef()
-      }
     },
-    methods:{
-      updateRef(){
-        this.definition.REF = this.doIntersect && this.ref!=='none' ? this.ref: null
-      }
-    }
   }
 </script>
 
@@ -107,13 +98,12 @@
     </tr>
     <tr>
       <th>Reference</th>
-      <td><select v-model="ref">
+      <td colspan="2"><select v-model="ref">
         <option value="none">None</option>
         <option value="srgb">sRGB</option>
         <option value="dci-p3">DCI-P3</option>
         <option value="bt.2020">BT.2020</option>
       </select></td>
-      <td>Intersect<input type="checkbox" v-model="doIntersect"></td>
     </tr>
   </table>
 </template>
