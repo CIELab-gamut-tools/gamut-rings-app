@@ -1,40 +1,7 @@
 <script>
   import FPInput from "./FPInput.vue";
-  const PRESET={
-    srgb:{
-      RGBxy:[
-        [.64, .33],
-        [.3, .6],
-        [.15, .06],
-      ],
-      white: 'D65'
-    },
-    "dci-p3":{
-      RGBxy:[
-        [.68,.32],
-        [.265,.69],
-        [.15,.06]
-      ],
-      white: 'DCI'
-    },
-    "bt.2020":{
-      RGBxy:[
-        [.708,.292],
-        [.17,.797],
-        [.131,.046]
-      ],
-      white: 'D65'
-    }
-  }
-  const WHITE={
-    D50:[.3457,.3585],
-    D55:[.3324,.3474],
-    D60:[.3217,.3377],
-    D65:[.3127, .3290],
-    DCI:[.314,.351],
-    D75:[.2990,.3149],
-    D93:[.2832,.2971],
-  }
+  import {WHITES, REFS as PRESETS} from '../gamut/refs'
+
   export default {
     name: "SyntheticGamutEditor",
     components:{
@@ -50,22 +17,23 @@
       return {
         preset:'srgb',
         updating:false,
-        white:'D65'
+        white:'D65',
+        ref:'none',
       }
     },
     watch:{
       preset(v){
         if (v==='custom') return;
         this.updating=true;
-        this.definition.RGBxy = PRESET[v].RGBxy.map(a=>a.slice());
-        this.white = PRESET[v].white;
+        this.definition.RGBxy = PRESETS[v].RGBxy.map(a=>a.slice());
+        this.white = PRESETS[v].white;
         this.definition.whiteBoost = 0;
         setTimeout(()=>this.updating=false,1);
       },
       white(v){
         if (v==='custom') return;  
         this.updating=true;
-        this.definition.white = WHITE[v].slice();
+        this.definition.white = WHITES[v].slice();
         setTimeout(()=>this.updating=false,1);      
       },
       definition:{
@@ -73,8 +41,11 @@
           if (!this.updating) this.preset = this.white ='custom'
         },
         deep:true
-      }
-    }
+      },
+      ref(){
+        this.definition.REF = this.ref!=='none' ? this.ref: null
+      },
+    },
   }
 </script>
 
@@ -124,6 +95,15 @@
       <td>
         <f-p-input type="number" :max="2" :min="0" :step="0.1" :places="1" v-model=definition.whiteBoost />
       </td>
+    </tr>
+    <tr>
+      <th>Reference</th>
+      <td colspan="2"><select v-model="ref">
+        <option value="none">None</option>
+        <option value="srgb">sRGB</option>
+        <option value="dci-p3">DCI-P3</option>
+        <option value="bt.2020">BT.2020</option>
+      </select></td>
     </tr>
   </table>
 </template>
