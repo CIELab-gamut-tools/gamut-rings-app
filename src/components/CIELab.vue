@@ -136,7 +136,8 @@ export default {
       this.rendering = false;
       if (this.rerender){
         this.rerender = false;
-        return this.render();
+        requestAnimationFrame(()=>this.render());
+        // return this.render();
       }
     }
   }

@@ -1,7 +1,7 @@
 
 <script>
 const Ls = [10,'::',10,100];
-  import {rings} from '../gamut';
+  import {rings, intersect} from '../gamut';
   import * as wgl from './wgl';
   export default {
     name: "GamutRings",
@@ -35,17 +35,21 @@ const Ls = [10,'::',10,100];
       this.programs.varColour = wgl.makeProgram(gl, 'varColour');
       this.buffers.rings = gl.createBuffer();
       this.arrays.rings = new Float32Array(7202);
+      this.buffers.iRings = gl.createBuffer();
+      this.arrays.iRings = new Float32Array(14402);
       this.buffers.lines=[];
       this.buffers.areas=[];
-      for(let n=0;n<10;n++){
-        const la=new Uint16Array(360);
-        for(let i=0;i<360;i++){
-          la[i]=n*360+i+1;
-        }
-        const lb = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lb);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, la, gl.STATIC_DRAW);
-        this.buffers.lines.push(lb);
+      for(let n=0;n<20;n++){
+
+          const la=new Uint16Array(360);
+          for(let i=0;i<360;i++){
+            la[i]=n*360+i+1;
+          }
+          const lb = gl.createBuffer();
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lb);
+          gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, la, gl.STATIC_DRAW);
+          this.buffers.lines.push(lb);
+
         let aa;
         if (n){
           aa = new Uint16Array(722)
@@ -93,45 +97,94 @@ const Ls = [10,'::',10,100];
             this.refRingData = rings(refGamut, Ls)
           }
           console.log(this.refRingData);
-          this.ringData = rings(gamut, Ls, this.refRingData[2]);
+          const iGamut = intersect(gamut, refGamut);
+          this.ringData = rings(iGamut, Ls, this.refRingData[2]);
         } else {
           this.ringData = rings(gamut, Ls);
         }
         const rcalc = performance.now();
         console.log(`rings calc took ${rcalc-start}ms`)
         wgl.clear(gl);
-        const [x,y] = this.ringData;
-        const data=this.arrays.rings;
-        for (let i=0, j=2; i<3600; i++){
-          data[j++]=(x[i])/1000;
-          data[j++]=(y[i])/1000;
-        }
-        {
-          const {program, attributes:{a_position}, uniforms:{u_lightness, u_chroma}} = programs.varColour;
-          gl.useProgram(program);
-          gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.rings);
-          gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-          gl.enableVertexAttribArray(a_position);
-          gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
-          for (let i=0;i<10;i++){
-            gl.uniform1f(u_chroma, 10+i*4);
-            gl.uniform1f(u_lightness, 30+i*68/9);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i]);
-            gl.drawElements(i?gl.TRIANGLE_STRIP:gl.TRIANGLE_FAN,i?722:362,gl.UNSIGNED_SHORT, 0);
+        if (refGamut) {
+          const [x, y] = this.ringData;
+          const [rx, ry] = this.refRingData;
+          const data = this.arrays.iRings;
+          for (let i=0, j=2; i<3600; i+=360){
+            for (let k=i; k<i+360; k++){
+              data[j++] = (x[k]) / 1000;
+              data[j++] = (y[k]) / 1000;
+            }
+            for (let k=i; k<i+360; k++){
+              data[j++] = (rx[k]) / 1000;
+              data[j++] = (ry[k]) / 1000;
+            }
           }
-        }
-        {
-          const {program, attributes:{a_position}, uniforms:{u_col}} = programs.fixedColour;
-          gl.useProgram(program);
-          gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.rings);
-          gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-          gl.enableVertexAttribArray(a_position);
-          gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
-          for (let i=0;i<10;i++){
-            const gs = 0;
-            gl.uniform4f(u_col, gs/2,gs/2,gs/2, 1);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.lines[i]);
-            gl.drawElements(gl.LINE_LOOP, 360, gl.UNSIGNED_SHORT, 0);
+          {
+            const {program, attributes: {a_position}, uniforms: {u_lightness, u_chroma}} = programs.varColour;
+            gl.useProgram(program);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.iRings);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+            gl.enableVertexAttribArray(a_position);
+            gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+            for (let i = 0; i < 10; i++) {
+              gl.uniform1f(u_chroma, 10 + i * 4);
+              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i*2]);
+              gl.drawElements(i ? gl.TRIANGLE_STRIP : gl.TRIANGLE_FAN, i ? 722 : 362, gl.UNSIGNED_SHORT, 0);
+              gl.uniform1f(u_chroma, 0);
+              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i*2+1]);
+              gl.drawElements( gl.TRIANGLE_STRIP, 722, gl.UNSIGNED_SHORT, 0);
+            }
+          }
+          {
+            const {program, attributes: {a_position}, uniforms: {u_col}} = programs.fixedColour;
+            gl.useProgram(program);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.rings);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+            gl.enableVertexAttribArray(a_position);
+            gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+            for (let i = 0; i < 10; i++) {
+              const gs = 0;
+              gl.uniform4f(u_col, gs / 2, gs / 2, gs / 2, 1);
+              gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.lines[i*2+1]);
+              gl.drawElements(gl.LINE_LOOP, 360, gl.UNSIGNED_SHORT, 0);
+            }
+          }
+        } else {
+          const [x, y] = this.ringData;
+          const data = this.arrays.rings;
+          for (let i = 0, j = 2; i < 3600; i++) {
+            data[j++] = (x[i]) / 1000;
+            data[j++] = (y[i]) / 1000;
+          }
+          {
+            const {program, attributes: {a_position}, uniforms: {u_lightness, u_chroma}} = programs.varColour;
+            gl.useProgram(program);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.rings);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+            gl.enableVertexAttribArray(a_position);
+            gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+            for (let i = 0; i < 10; i++) {
+              gl.uniform1f(u_chroma, 10 + i * 4);
+              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i]);
+              gl.drawElements(i ? gl.TRIANGLE_STRIP : gl.TRIANGLE_FAN, i ? 722 : 362, gl.UNSIGNED_SHORT, 0);
+            }
+          }
+          {
+            const {program, attributes: {a_position}, uniforms: {u_col}} = programs.fixedColour;
+            gl.useProgram(program);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.rings);
+            gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+            gl.enableVertexAttribArray(a_position);
+            gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
+            for (let i = 0; i < 10; i++) {
+              const gs = 0;
+              gl.uniform4f(u_col, gs / 2, gs / 2, gs / 2, 1);
+              gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.lines[i]);
+              gl.drawElements(gl.LINE_LOOP, 360, gl.UNSIGNED_SHORT, 0);
+            }
           }
         }
         this.$emit('cgv',{cgv:this.ringData[3]})
