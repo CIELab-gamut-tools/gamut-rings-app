@@ -1,5 +1,6 @@
 
 <script>
+const AxisLimit = 1100, TickStep = 100, LabelStep = 200;
 const Ls = [10,'::',10,100];
   import {rings, intersect} from '../gamut';
   import * as wgl from './wgl';
@@ -25,6 +26,15 @@ const Ls = [10,'::',10,100];
         rerender:false,
         refObj:null,
         refRingData:null,
+        AxisLimit,
+        TickStep,
+        AxisEnd: AxisLimit-TickStep,
+        TickCount: 2*AxisLimit/TickStep-1,
+        LabelStep,
+        XLabelCount: 2*Math.floor(AxisLimit/LabelStep)-1,
+        YLabelCount: 2*Math.floor(AxisLimit/LabelStep)+1,
+        XLabelEnd: AxisLimit-(AxisLimit%LabelStep),
+        YLabelEnd: AxisLimit+(AxisLimit%LabelStep),
       }
     },
     mounted(){
@@ -111,12 +121,12 @@ const Ls = [10,'::',10,100];
           const data = this.arrays.iRings;
           for (let i=0, j=2; i<3600; i+=360){
             for (let k=i; k<i+360; k++){
-              data[j++] = (x[k]) / 1000;
-              data[j++] = (y[k]) / 1000;
+              data[j++] = (x[k]) / AxisLimit;
+              data[j++] = (y[k]) / AxisLimit;
             }
             for (let k=i; k<i+360; k++){
-              data[j++] = (rx[k]) / 1000;
-              data[j++] = (ry[k]) / 1000;
+              data[j++] = (rx[k]) / AxisLimit;
+              data[j++] = (ry[k]) / AxisLimit;
             }
           }
           {
@@ -155,8 +165,8 @@ const Ls = [10,'::',10,100];
           const [x, y] = this.ringData;
           const data = this.arrays.rings;
           for (let i = 0, j = 2; i < 3600; i++) {
-            data[j++] = (x[i]) / 1000;
-            data[j++] = (y[i]) / 1000;
+            data[j++] = (x[i]) / AxisLimit;
+            data[j++] = (y[i]) / AxisLimit;
           }
           {
             const {program, attributes: {a_position}, uniforms: {u_lightness, u_chroma}} = programs.varColour;
@@ -204,24 +214,24 @@ const Ls = [10,'::',10,100];
 <template>
 <div>
    <div class="square">
-     <svg viewBox="-1000 -1000 2000 2000">
-       <path d="M-1000,-1000H1000V1000H-1000Z" stroke="black" stroke-width="10" fill="none"/>
-       <path d="M-900,0H900" stroke="#888" stroke-width="3" fill="none"/>
-       <path d="M0,-900V900" stroke="#888" stroke-width="3" fill="none"/>
-       <line v-for="i of 19" :key=i :x1="(i-10)*100" :x2="(i-10)*100" y1="-1000" y2="-980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :key=i :x1="(i-10)*100" :x2="(i-10)*100" y1="1000" y2="980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :key=i :y1="(i-10)*100" :y2="(i-10)*100" x1="1000" x2="980" stroke-width="3" stroke="black"/>
-       <line v-for="i of 19" :key=i :y1="(i-10)*100" :y2="(i-10)*100" x1="-1000" x2="-980" stroke-width="3" stroke="black"/>
-       <text v-for="i of 9" :key=i :x="(i-5)*200" y="970" class="x-axis-labels">{{ (i-5)*200}}</text>
-       <text v-for="i of 9" :key=i :x="(i-5)*200" y="-920" class="x-axis-labels">{{ (5-i)*200}}</text>
-       <text v-for="i of 9" :key=i :y="(i-5)*200+25" x="-970" class="y-axis-labels">{{ (5-i)*200}}</text>
-       <text v-for="i of 9" :key=i :y="(i-5)*200+25" x="970" class="y-axis-labels" text-anchor="end">{{ (i-5)*200}}</text>
-       <text x="-250" y="840" class="label">a</text>
-       <text x="-200" y="820" class="label-script">*</text>
-       <text x="-200" y="880" class="label-script">RSS</text>
-       <text x="-900" y="100" class="label">b</text>
-       <text x="-850" y="80" class="label-script">*</text>
-       <text x="-850" y="140" class="label-script">RSS</text>
+     <svg :viewBox="`-${AxisLimit} -${AxisLimit} ${AxisLimit*2} ${AxisLimit*2}`">
+       <path :d="`M-${AxisLimit},-${AxisLimit}H${AxisLimit}V${AxisLimit}H-${AxisLimit}Z`" stroke="black" stroke-width="10" fill="none"/>
+       <path :d="`M-${AxisEnd},0H${AxisEnd}`" stroke="#888" stroke-width="3" fill="none"/>
+       <path :d="`M0,-${AxisEnd}V${AxisEnd}`" stroke="#888" stroke-width="3" fill="none"/>
+       <line v-for="i of TickCount" :key=i :x1="i*TickStep-AxisLimit" :x2="i*TickStep-AxisLimit" :y1="-AxisLimit" :y2="-AxisLimit+20" stroke-width="3" stroke="black"/>
+       <line v-for="i of TickCount" :key=i :x1="i*TickStep-AxisLimit" :x2="i*TickStep-AxisLimit" :y1="AxisLimit" :y2="AxisLimit-20" stroke-width="3" stroke="black"/>
+       <line v-for="i of TickCount" :key=i :y1="i*TickStep-AxisLimit" :y2="i*TickStep-AxisLimit" :x1="AxisLimit" :x2="AxisLimit-20" stroke-width="3" stroke="black"/>
+       <line v-for="i of TickCount" :key=i :y1="i*TickStep-AxisLimit" :y2="i*TickStep-AxisLimit" :x1="-AxisLimit" :x2="-AxisLimit+20" stroke-width="3" stroke="black"/>
+       <text v-for="i of XLabelCount" :key=i :x="i*LabelStep-XLabelEnd" :y="AxisLimit-30" class="x-axis-labels">{{ i*LabelStep-XLabelEnd}}</text>
+       <text v-for="i of XLabelCount" :key=i :x="i*LabelStep-XLabelEnd" :y="80-AxisLimit" class="x-axis-labels">{{ i*LabelStep-XLabelEnd}}</text>
+       <text v-for="i of YLabelCount" :key=i :y="i*LabelStep-YLabelEnd+25" :x="30-AxisLimit" class="y-axis-labels">{{ YLabelEnd-i*LabelStep}}</text>
+       <text v-for="i of YLabelCount" :key=i :y="i*LabelStep-YLabelEnd+25" :x="AxisLimit-30" class="y-axis-labels" text-anchor="end">{{ YLabelEnd-i*LabelStep}}</text>
+       <text :x="-250" :y="AxisLimit-160" class="label">a</text>
+       <text :x="-200" :y="AxisLimit-180" class="label-script">*</text>
+       <text :x="-200" :y="AxisLimit-120" class="label-script">RSS</text>
+       <text :x="100-AxisLimit" :y="100" class="label">b</text>
+       <text :x="150-AxisLimit" :y="80" class="label-script">*</text>
+       <text :x="150-AxisLimit" :y="140" class="label-script">RSS</text>
      </svg>
      <canvas ref="canv"></canvas>
    </div>
