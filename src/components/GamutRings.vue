@@ -137,12 +137,12 @@ const Ls = [10,'::',10,100];
             gl.enableVertexAttribArray(a_position);
             gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
             for (let i = 0; i < 10; i++) {
-              gl.uniform1f(u_chroma, 10 + i * 4);
-              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.uniform1f(u_chroma, 15 + Math.sqrt(i) * 12); // 10 + i*4
+              gl.uniform1f(u_lightness, 30 + i * 60 / 9);
               gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i*2]);
               gl.drawElements(i ? gl.TRIANGLE_STRIP : gl.TRIANGLE_FAN, i ? 722 : 362, gl.UNSIGNED_SHORT, 0);
               gl.uniform1f(u_chroma, 0);
-              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.uniform1f(u_lightness, 50 + i * 48 / 9);
               gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i*2+1]);
               gl.drawElements( gl.TRIANGLE_STRIP, 722, gl.UNSIGNED_SHORT, 0);
             }
@@ -176,8 +176,8 @@ const Ls = [10,'::',10,100];
             gl.enableVertexAttribArray(a_position);
             gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0);
             for (let i = 0; i < 10; i++) {
-              gl.uniform1f(u_chroma, 10 + i * 4);
-              gl.uniform1f(u_lightness, 30 + i * 68 / 9);
+              gl.uniform1f(u_chroma, 15 + Math.sqrt(i) * 12);
+              gl.uniform1f(u_lightness, 30 + i * 60 / 9);
               gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.areas[i]);
               gl.drawElements(i ? gl.TRIANGLE_STRIP : gl.TRIANGLE_FAN, i ? 722 : 362, gl.UNSIGNED_SHORT, 0);
             }
