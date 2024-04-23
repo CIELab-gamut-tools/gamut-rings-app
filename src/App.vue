@@ -1,6 +1,21 @@
 <template>
   <div class="main">
-    <div class="title">Gamut Rings Explorer</div>
+    <div class="header">
+      <div class="menu show" ref="menu" @click="$refs.menu.classList.toggle('show')">
+        <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+          <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+        </svg>
+        <div class="content mask"></div>
+        <ul class="content">
+          <li><label>
+            Load CGATS File...
+            <input class=hidden type=file accept=* @change=loadFile>
+          </label></li>
+          <li>Load Sample Data...</li>
+        </ul>
+      </div>
+      <div class="title">Gamut Rings Explorer</div>
+    </div>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition />
     </div>
@@ -25,13 +40,69 @@ html{
   line-height: 1.1vw;
 }
 
-.title{
+.header{
   grid-area:1/1/2/4;
-  max-width:100%;
+  width:100vw;
+  height:3.8vw;
   max-height:100%;
+  background:#633;
+  color:#fff;
+  margin:auto;
+  fill:#fff;
+}
+.title{
+  width:100%;
   font-size: 2.5vw;
   font-weight: bold;
-  margin:auto;
+}
+.header>.menu{
+  position:absolute;
+  top:0;
+  left:0;
+  cursor:pointer;
+
+}
+.menu svg{
+  width:3.8vw;
+  height:3.8vw;
+}
+.menu.show{
+  background:#fff2;
+}
+.menu>.content{
+  display:none;
+}
+.menu.show>.content{
+  display:block;
+}
+.hidden{
+  display:none
+}
+.content.mask{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index: 1;
+  cursor:default;
+  opacity:1;
+}
+ul.content{
+  z-index: 2;
+  position:absolute;
+  top:100%;
+  width:20vw;
+  left:0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background:#eee;
+  color:#222;
+  font-size:1.5vw;
+}
+.header ul.content>li:hover{
+  background:#6333;
 }
 .footer{
   grid-area: 5/2/6/4;
@@ -42,7 +113,7 @@ html{
 .main{
   display:grid;
   grid-template: 1fr 9fr 3fr 1fr 2.6fr/8fr 12fr 12fr;
-  width:calc(100vw - 20px);
+  width:calc(100vw);
   height:calc((100vw - 20px) * 0.52);
   justify-content: center;
   align-content: center;
@@ -143,9 +214,10 @@ import SyntheticGamutEditor from "./components/SyntheticGamutEditor.vue";
 import GamutRings from "./components/GamutRings.vue";
 import Chromaticity from "./components/Chromaticity.vue";
 import CieLab from "./components/CIELab.vue";
-import {makeSynthetic} from './gamut';
+import {makeSynthetic, fromCgats} from './gamut';
 import {ref, watchEffect, computed} from 'vue';
 import {REFS, WHITES} from "./gamut/refs";
+import {rows,max} from "t-matrix";
 
 export default {
   name: 'App',
@@ -165,6 +237,7 @@ export default {
       REF: null
     });
     const gamut = ref(null);
+    const isCgats = ref(false);
     const refGamut = ref(null);
     let refGamutName = null;
     const cgv = ref(0);
@@ -172,7 +245,9 @@ export default {
     watchEffect(()=>{
       const start = performance.now();
       const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.min(...v)];
-      gamut.value = makeSynthetic({...gamutDefinition.value, driveMapping});
+      if (!isCgats.value){
+        gamut.value = makeSynthetic({...gamutDefinition.value, driveMapping});
+      }
       if (gamutDefinition.value.REF !== refGamutName){
         refGamutName = gamutDefinition.value.REF;
         refGamut.value = refGamutName && makeSynthetic(refGamutName);
@@ -186,8 +261,47 @@ export default {
       refGamut,
       gamutDefinition,
       cgv,
-      displayCGV
+      displayCGV,
+      isCgats,
     }
   },
+  methods:{
+    async loadFile(evt){
+      const file = evt.target.files[0];
+      const readEvt = await new Promise((res,rej)=>{
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = res;
+        reader.onerror = rej;
+      });
+      this.gamut = fromCgats(readEvt.target.result);
+      this.isCgats = true;
+      const {RGB, XYZ} = this.gamut;
+      const mx = max(RGB);
+      let r,g,b,w,n=0;
+      for(let rgb of rows(RGB)){
+        if (rgb[0]==mx && rgb[1]==0 && rgb[2]==0) r=n;
+        else if (rgb[0]==0 && rgb[1]==mx && rgb[2]==0) g=n;
+        else if (rgb[0]==0 && rgb[1]==0 && rgb[2]==mx) b=n;
+        else if (rgb[0]==mx && rgb[1]==mx && rgb[2]==mx) w=n;
+        n++;
+      }
+      const xyz2xy=m=>{
+        const [X,Y,Z]=[...m], T=X+Y+Z;
+        return [X/T, Y/T];
+      }
+      const rxy=xyz2xy(XYZ.get(r,':'));
+      const gxy=xyz2xy(XYZ.get(g,':'));
+      const bxy=xyz2xy(XYZ.get(b,':'));
+      const wxy=xyz2xy(XYZ.get(w,':'));
+      const WLO = XYZ.get(w,1);
+      const CLO = XYZ.get(r,1)+XYZ.get(g,1)+XYZ.get(b,1);
+      console.log({rxy,gxy,bxy,wxy,WLO,CLO})
+      this.gamutDefinition.RGBxy = [rxy, gxy, bxy];
+      this.gamutDefinition.white = wxy;
+      this.gamutDefinition.whiteBoost=(WLO-CLO)/CLO;
+      setTimeout(()=>this.isCgats=false, 1000)
+    }
+  }
 }
 </script>
