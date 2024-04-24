@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="header">
-      <div class="menu show" ref="menu" @click="$refs.menu.classList.toggle('show')">
+      <div class="menu" ref="menu" @click="$refs.menu.classList.toggle('show')">
         <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
           <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
         </svg>
@@ -11,15 +11,21 @@
             Load CGATS File...
             <input class=hidden type=file accept=* @change=loadFile>
           </label></li>
-          <li>Load Sample Data...</li>
+          <li><label>
+            Load Sample Data...
+            </label></li>
         </ul>
       </div>
       <div class="title">Gamut Rings Explorer</div>
     </div>
     <div class="table">
-      <synthetic-gamut-editor v-model:definition=gamutDefinition />
+      <synthetic-gamut-editor v-model:definition=gamutDefinition :locked=isCgats />
     </div>
-    <chromaticity class="plot" v-model:definition="gamutDefinition" />
+    <chromaticity class="plot" v-model:definition="gamutDefinition" :locked=isCgats />
+    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class=lock :class={hidden:!isCgats} @click=unlock>
+      <path d="m622-453-56-56 82-82-57-57-82 82-56-56 195-195q12-12 26.5-17.5T705-840q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L622-453ZM200-200h57l195-195-28-29-29-28-195 195v57ZM792-56 509-338 290-120H120v-169l219-219L56-792l57-57 736 736-57 57Zm-32-648-56-56 56 56Zm-169 56 57 57-57-57ZM424-424l-29-28 57 57-28-29Z"/>
+    </svg>
+
     <cie-lab class=cielab :gamut=gamut />
     <gamut-rings class="rings" :gamut=gamut :refGamut="refGamut" @cgv="e=>cgv=e.cgv"/>
     <div class="footer">
@@ -129,6 +135,15 @@ ul.content{
 .plot{
   grid-area: 2/1;
   width:100%
+}
+.lock{
+  grid-area: 2/1;
+  position:relative;
+  top:0;
+  margin:5% 0 0 80%;
+  width:15%;
+  height:15%;
+  cursor:pointer;
 }
 .rings{
   grid-area: 2/3/4/4;
@@ -244,7 +259,7 @@ export default {
     const displayCGV = computed(()=>parseFloat(cgv.value.toPrecision(3)).toFixed(0))
     watchEffect(()=>{
       const start = performance.now();
-      const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.min(...v)];
+      const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.pow(Math.min(...v),0.5)];
       if (!isCgats.value){
         gamut.value = makeSynthetic({...gamutDefinition.value, driveMapping});
       }
@@ -300,7 +315,10 @@ export default {
       this.gamutDefinition.RGBxy = [rxy, gxy, bxy];
       this.gamutDefinition.white = wxy;
       this.gamutDefinition.whiteBoost=(WLO-CLO)/CLO;
-      setTimeout(()=>this.isCgats=false, 1000)
+      this.$refs.menu.classList.toggle('show')
+    },
+    unlock(){
+      this.isCgats=false
     }
   }
 }
