@@ -67,7 +67,7 @@ export default {
       if (this.down){
         evt.preventDefault();
         this.down=false;
-        [this.rot,this.tip] == this.onDown;
+        // [this.rot,this.tip] = this.onDown;
         this.render()
       }
     },
@@ -145,7 +145,15 @@ export default {
 <template>
  <div>
     <div class=square>
-    <canvas ref="canv" width=500 height=500 @mousedown=mouseDown @mouseup=mouseUp @mousemove=mouseMove @mouseleave=mouseLeave />
+    <canvas 
+        ref="canv" 
+        width=500 
+        height=500 
+        @mousedown=mouseDown 
+        @mouseup=mouseUp 
+        @mousemove=mouseMove 
+        @mouseleave=mouseLeave 
+    />
     <div class=indicators>
       rotation {{rot.toFixed(0)}}°, tilt {{tip.toFixed(0)}}°
     </div>
@@ -153,6 +161,9 @@ export default {
   </div>
 </template>
 <style scoped>
+canvas{
+  cursor: pointer;
+}
 div.container{
   width:100%;
   height:100%;
