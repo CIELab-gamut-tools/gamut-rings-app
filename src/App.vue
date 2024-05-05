@@ -11,20 +11,25 @@
             Load CGATS File...
             <input class=hidden type=file accept=* @change=loadFile>
           </label></li>
-          <li><label>
-            Load Sample Data...
-            </label></li>
         </ul>
       </div>
       <div class="title">Gamut Rings Explorer</div>
+      <a class="github" href="https://github.com/CIELab-gamut-tools/gamut-rings-app" target="_blank">
+        <svg width="49" height="48" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 118 116">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" fill="#fff"/>
+        </svg>
+      </a>
     </div>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition :locked=isCgats />
     </div>
     <chromaticity class="plot" v-model:definition="gamutDefinition" :locked=isCgats />
-    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class=lock :class={hidden:!isCgats} @click=unlock>
-      <path d="m622-453-56-56 82-82-57-57-82 82-56-56 195-195q12-12 26.5-17.5T705-840q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L622-453ZM200-200h57l195-195-28-29-29-28-195 195v57ZM792-56 509-338 290-120H120v-169l219-219L56-792l57-57 736 736-57 57Zm-32-648-56-56 56 56Zm-169 56 57 57-57-57ZM424-424l-29-28 57 57-28-29Z"/>
-    </svg>
+<!--    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class=lock :class={hidden:!isCgats} @click=unlock>-->
+<!--      <path d="m622-453-56-56 82-82-57-57-82 82-56-56 195-195q12-12 26.5-17.5T705-840q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L622-453ZM200-200h57l195-195-28-29-29-28-195 195v57ZM792-56 509-338 290-120H120v-169l219-219L56-792l57-57 736 736-57 57Zm-32-648-56-56 56 56Zm-169 56 57 57-57-57ZM424-424l-29-28 57 57-28-29Z"/>-->
+<!--    </svg>-->
+    <div class=lock :class={hidden:!isCgats} @click=unlock>
+      CGATS loaded, editor locked.<br>Click here to unlock.
+    </div>
 
     <cie-lab class=cielab :gamut=gamut />
     <gamut-rings class="rings" :gamut=gamut :refGamut="refGamut" @cgv="e=>cgv=e.cgv"/>
@@ -36,7 +41,7 @@
         </a></p>
       <p> &copy;2021 Euan Smith. Licensed under the <a href="https://opensource.org/licenses/MIT">MIT</a> licence - distribute and use freely! Find me on <a href="https://github.com/euan-smith">github</a></p>
     </div>
-    <div class=volume>VOLUME = {{displayCGV}} &#916;E&#179;</div>
+    <div class=volume>{{refGamut?"INTERSECTION ":""}}VOLUME = {{displayCGV}} &#916;E&#179;</div>
   </div>
 </template>
 
@@ -66,9 +71,15 @@ html{
   top:0;
   left:0;
   cursor:pointer;
-
 }
-.menu svg{
+.header>.github{
+  position:absolute;
+  top:0;
+  right:0;
+  cursor:pointer;
+}
+
+.menu svg, .github svg{
   width:3.8vw;
   height:3.8vw;
 }
@@ -136,13 +147,24 @@ ul.content{
   grid-area: 2/1;
   width:100%
 }
-.lock{
+svg.lock{
   grid-area: 2/1;
   position:relative;
   top:0;
   margin:5% 0 0 80%;
   width:15%;
   height:15%;
+  cursor:pointer;
+}
+div.lock{
+  grid-area: 2/1;
+  position:relative;
+  margin: 5% 0 0 0;
+  width: 100%;
+  height: 15%;
+  font-size: 1.2em;
+  background: #0003;
+  color: #fff;
   cursor:pointer;
 }
 .rings{
