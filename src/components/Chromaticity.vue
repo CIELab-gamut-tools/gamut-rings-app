@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="canv" @mousedown="mousedown" @mousemove="mousemove" @mouseleave="mouseleave" @mouseup="mouseup"></canvas>
+  <canvas :class={locked} ref="canv" @mousedown="mousedown" @mousemove="mousemove" @mouseleave="mouseleave" @mouseup="mouseup"></canvas>
 </template>
 
 <script>
@@ -14,6 +14,10 @@ export default {
       type:Object,
       required:true
     },
+    locked:{
+      type:Boolean,
+      default:false
+    }
   },
   data(){
     return {
@@ -62,10 +66,10 @@ export default {
       if (this.down){
         this.point[0]=x;
         this.point[1]=y;
-      if (!setIsValid(this.definition.RGBxy, this.definition.white)){
+        if (!setIsValid(this.definition.RGBxy, this.definition.white)){
           [this.point[0], this.point[1]]=this.was;
         }
-      } else {
+      } else if(!this.locked) {
         let d=1e9, closest=null;
         for (let p of [this.definition.white, ...this.definition.RGBxy]){
           const dx=x-p[0], dy=y-p[1], nd=dx*dx+dy*dy;
@@ -78,7 +82,7 @@ export default {
           this.focus=closest;
           this.whiteFocussed = this.focus === this.definition.white;
         }
-      }
+      } else {this.focus = null}
     },
     mouseleave(evt){
       evt.preventDefault();
@@ -171,7 +175,11 @@ function setIsValid(prims, white){
 </script>
 
 <style scoped>
+
 canvas{
   cursor: pointer;
+}
+canvas.locked{
+  cursor:default;
 }
 </style>

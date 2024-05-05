@@ -11,6 +11,10 @@
       definition:{
         type:Object,
         required:true
+      },
+      locked:{
+        type:Boolean,
+        default:false
       }
     },
     data(){
@@ -58,13 +62,13 @@
     </tr>
     <tr v-for="(xy,i) of definition.RGBxy" :key="i" >
       <td>{{['red','green','blue'][i]}}</td>
-      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[0] /> </td>
-      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[1] /></td>
+      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[0] :disabled=locked /> </td>
+      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=xy[1] :disabled=locked /></td>
     </tr>
     <tr>
       <td>white</td>
-      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=definition.white[0] /></td>
-      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=definition.white[1] /></td>
+      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=definition.white[0] :disabled=locked /></td>
+      <td><f-p-input type="number" :max="1" :min="0" :step="0.01" :places="4" v-model=definition.white[1] :disabled=locked /></td>
     </tr>
     <tr>
       <th>preset</th>
@@ -73,7 +77,7 @@
     </tr>
     <tr>
       <td>
-        <select v-model="preset">
+        <select v-model="preset" :disabled=locked>
           <option value="custom">custom</option>
           <option value="srgb">sRGB</option>
           <option value="dci-p3">DCI-P3</option>
@@ -81,7 +85,7 @@
         </select>        
       </td>
       <td>
-        <select v-model="white">
+        <select v-model="white" :disabled=locked>
           <option value="custom">custom</option>
           <option value="D50">D50</option>
           <option value="D55">D55</option>
@@ -93,7 +97,7 @@
         </select>        
       </td>
       <td>
-        <f-p-input type="number" :max="2" :min="0" :step="0.1" :places="1" v-model=definition.whiteBoost />
+        <f-p-input type="number" :disabled=locked :max="2" :min="0" :step="0.1" :places="1" v-model=definition.whiteBoost />
       </td>
     </tr>
     <tr>
