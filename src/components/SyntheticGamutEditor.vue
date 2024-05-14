@@ -31,7 +31,7 @@
         this.updating=true;
         this.definition.RGBxy = PRESETS[v].RGBxy.map(a=>a.slice());
         this.white = PRESETS[v].white;
-        this.definition.whiteBoost = 0;
+        this.definition.clo = 1;
         setTimeout(()=>this.updating=false,1);
       },
       white(v){
@@ -54,7 +54,7 @@
 </script>
 
 <template>
-  <table ref=root>
+  <table class="root" ref=root>
     <tr>
       <th>Colour</th>
       <th>CIE1931 x</th>
@@ -97,11 +97,16 @@
         </select>        
       </td>
       <td>
-        <f-p-input type="number" :disabled=locked :max="2" :min="0" :step="0.1" :places="1" v-model=definition.whiteBoost />
+        <f-p-input type="number" :disabled=locked :max="1" :min="0" :step="0.05" :places="2" v-model=definition.clo />
       </td>
     </tr>
+    <tr ></tr>
+  </table>
+  <table>
+    <tr style="height:5px"></tr>
+    <tr style="height:5px"></tr>
     <tr>
-      <th>Reference</th>
+      <th>Reference Colour Space</th>
       <td colspan="2"><select v-model="ref">
         <option value="none">None</option>
         <option value="srgb">sRGB</option>
@@ -116,6 +121,10 @@
 table{
   border:none;
   font-size:1.2vw;
+}
+table.root{
+  border-bottom:1px solid #333;
+  border-radius: 0;
 }
 td{
   padding:0 0.5vw;

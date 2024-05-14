@@ -6,11 +6,15 @@
           <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
         </svg>
         <div class="content mask"></div>
-        <ul class="content">
+        <ul class="content" style="text-align: left">
           <li><label>
             Load CGATS File...
             <input class=hidden type=file accept=* @change=loadFile>
           </label></li>
+<!--          <li><label>-->
+<!--            Sample Files...-->
+<!--            <input class=hidden type=button @click=pickSample>-->
+<!--          </label></li>-->
         </ul>
       </div>
       <div class="title">Gamut Rings Explorer</div>
@@ -39,6 +43,7 @@
       <p>Calculation based on: <a href="https://doi.org/10.1002/jsid.918">E. Smith, R. L. Heckaman, K. Lang, J. Penczek, J. Bergquist,
          JSID, Volume 28, Issue 6, June 2020, 548-556.
         </a></p>
+      <p>and <a href="https://doi.org/10.1002/jsid.1292">E. Smith, JSID, May 2024, doi.org/10.1002/jsid.1292</a></p>
       <p> &copy;2021 Euan Smith. Licensed under the <a href="https://opensource.org/licenses/MIT">MIT</a> licence - distribute and use freely! Find me on <a href="https://github.com/euan-smith">github</a></p>
     </div>
     <div class=volume>{{refGamut?"INTERSECTION ":""}}VOLUME = {{displayCGV}} &#916;E&#179;</div>
@@ -46,12 +51,15 @@
 </template>
 
 <style>
-html{
-    font-size:1vw;
+html,body{
+  font-size:1vw;
   line-height: 1.1vw;
+  padding:0;
+  margin:0;
 }
 
 .header{
+  position:relative;
   grid-area:1/1/2/4;
   width:100vw;
   height:3.8vw;
@@ -60,9 +68,14 @@ html{
   color:#fff;
   margin:auto;
   fill:#fff;
+
 }
 .title{
-  width:100%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  vertical-align: center;
   font-size: 2.5vw;
   font-weight: bold;
 }
@@ -79,6 +92,12 @@ html{
   cursor:pointer;
 }
 
+.menu li{
+  padding:6px;
+}
+li label{
+  cursor:pointer;
+}
 .menu svg, .github svg{
   width:3.8vw;
   height:3.8vw;
@@ -91,6 +110,7 @@ html{
 }
 .menu.show>.content{
   display:block;
+  border:1px solid black;
 }
 .hidden{
   display:none
@@ -129,7 +149,7 @@ ul.content{
 }
 .main{
   display:grid;
-  grid-template: 1fr 9fr 3fr 1fr 2.6fr/8fr 12fr 12fr;
+  grid-template: 1fr 9fr 3fr 1fr 2.6fr/8.2fr 11fr 11fr;
   width:calc(100vw);
   height:calc((100vw - 20px) * 0.52);
   justify-content: center;
@@ -157,15 +177,19 @@ svg.lock{
   cursor:pointer;
 }
 div.lock{
-  grid-area: 2/1;
+  padding:2%;
+  grid-area: 2/1/6/1;
   position:relative;
-  margin: 5% 0 0 0;
-  width: 100%;
-  height: 15%;
-  font-size: 1.2em;
-  background: #0003;
-  color: #fff;
+  margin: 0 0 0 0;
+  width: 120%;
+  height: 10%;
+  font-size: 1.6em;
+  line-height: 1.1em;
+  font-style: italic;
+  background: #8001;
+  color: #622;
   cursor:pointer;
+  transform:translate(-2vw,8vw) rotate(-20deg);
 }
 .rings{
   grid-area: 2/3/4/4;
@@ -270,7 +294,7 @@ export default {
     const gamutDefinition = ref({
       RGBxy,
       white: [...WHITES.D65],
-      whiteBoost:0,
+      clo:1,
       REF: null
     });
     const gamut = ref(null);
@@ -281,7 +305,7 @@ export default {
     const displayCGV = computed(()=>parseFloat(cgv.value.toPrecision(3)).toFixed(0))
     watchEffect(()=>{
       const start = performance.now();
-      const driveMapping = v=>[...v, gamutDefinition.value.whiteBoost * Math.pow(Math.min(...v),0.5)];
+      const driveMapping = v=>[...v, (1/gamutDefinition.value.clo-1) * Math.pow(Math.min(...v),0.5)];
       if (!isCgats.value){
         gamut.value = makeSynthetic({...gamutDefinition.value, driveMapping});
       }
@@ -303,6 +327,9 @@ export default {
     }
   },
   methods:{
+    async pickSample(){
+
+    },
     async loadFile(evt){
       const file = evt.target.files[0];
       const readEvt = await new Promise((res,rej)=>{
@@ -336,7 +363,7 @@ export default {
       console.log({rxy,gxy,bxy,wxy,WLO,CLO})
       this.gamutDefinition.RGBxy = [rxy, gxy, bxy];
       this.gamutDefinition.white = wxy;
-      this.gamutDefinition.whiteBoost=(WLO-CLO)/CLO;
+      this.gamutDefinition.clo=CLO/WLO;
       this.$refs.menu.classList.toggle('show')
     },
     unlock(){

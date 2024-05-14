@@ -6,7 +6,7 @@ export function* splitLines(iterable){
   for (let str of iterable){
     if (typeof str === 'string'){
       for (let s of str.match(/[^\r\n]+/g)){
-        yield s.split('#')[0];
+        yield s.split('#')[0].trim();
       }
     }
   }
