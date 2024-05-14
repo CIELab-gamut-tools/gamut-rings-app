@@ -73,7 +73,7 @@
     <tr>
       <th>preset</th>
       <th>white preset</th>
-      <th>white boost</th>
+      <th>CLO/WLO</th>
     </tr>
     <tr>
       <td>
