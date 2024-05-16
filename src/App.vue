@@ -17,12 +17,21 @@
 <!--          </label></li>-->
         </ul>
       </div>
-      <div class="title">Gamut Rings Explorer</div>
-      <a class="github" href="https://github.com/CIELab-gamut-tools/gamut-rings-app" target="_blank">
-        <svg width="49" height="48" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 118 116">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" fill="#fff"/>
-        </svg>
-      </a>
+      <div class=title>Gamut Rings Explorer</div>
+      <div class=supported>
+        <span class=by>on</span>
+        <a class="github" href="https://github.com/CIELab-gamut-tools/gamut-rings-app" target="_blank">
+          <svg width="49" height="48" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 118 116">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" fill="#fff"/>
+          </svg>
+        </a>
+        <span class=by>supported by</span>
+        <a class=42t href="https://42t.com" target="_blank">
+          <svg xmlns="http://www.w3.org/2000/svg" width="90" height="48" viewBox="0 0 251.2 111.1" xml:space="preserve">
+            <path class="st0" d="M246.5 106.3c-2 2-4.4 3-7.3 3-2.8 0-5.3-1-7.3-3s-3-4.5-3-7.3 1-5.3 3-7.3 4.4-3 7.3-3c2.8 0 5.3 1 7.3 3s3 4.5 3 7.3-1 5.3-3 7.3z"/><path class="st0" d="M246.5 91.7c-2-2-4.4-3-7.3-3-2.8 0-5.3 1-7.3 3s-3 4.5-3 7.3 1 5.3 3 7.3 4.4 3 7.3 3c2.8 0 5.3-1 7.3-3s3-4.5 3-7.3-1-5.3-3-7.3zm-148-78.8c-3.1 3.5-5.6 7.5-7.2 11.9s-2.4 9.2-2.4 14v8.8h15.3v-7.9c0-7.2 2-13 5.8-17.3 3.8-4.2 9.3-6.4 16.4-6.4 3.8 0 7.1.6 9.7 1.7 2.7 1.1 4.9 2.7 6.6 4.5 1.7 1.9 3 4 3.8 6.4s1.2 4.8 1.2 7.3v.9c0 4.9-1.7 8.9-5.3 12.3-3.6 3.4-9.7 6.1-18.1 8-5.2 1.2-10 2.6-14.1 4.3-4.2 1.7-7.9 3.9-10.9 6.5s-5.4 5.8-7 9.5c-1.6 3.6-2.5 8-2.5 12.9v19.1h72.3V95H105v-2.9c0-6 2-10.5 6-13.6 4.2-3.2 10.9-5.9 20-7.9 11-2.4 19.1-6.5 24.2-12.3s7.7-12.8 7.7-21v-2.6c0-4.1-.7-8.1-2.2-12s-3.8-7.5-6.8-10.6c-3.1-3.1-6.9-5.6-11.5-7.5-4.5-1.9-9.9-2.8-16.1-2.8h-.1c-6 0-11.4 1-16.1 3.1-4.5 1.8-8.5 4.6-11.6 8zm99.7 25.9v70.5h16.5V23.9l-16.5 14.9zM168.3 3.6h76.4V18h-76.4V3.6zM64.2 75.5V3.6H38L1.5 71v18.9h25.6l16-14.4h-28L49 13v96.3h15.2V89.9H80V75.5H64.2z"/>
+          </svg>
+        </a>
+      </div>
     </div>
     <div class="table">
       <synthetic-gamut-editor v-model:definition=gamutDefinition :locked=isCgats />
@@ -38,13 +47,14 @@
     <cie-lab class=cielab :gamut=gamut />
     <gamut-rings class="rings" :gamut=gamut :refGamut="refGamut" @cgv="e=>cgv=e.cgv"/>
     <div class="footer">
-      <p>Original Gamut Rings concept: <a href="https://doi.org/10.1002/sdtp.12187">K. Masaoka, F. Jiang, M. D. Fairchild, and R. L. Heckaman,
+      <p>Original Gamut Rings concept: <a href="https://doi.org/10.1002/sdtp.12187" target="_blank">K. Masaoka, F. Jiang, M. D. Fairchild, and R. L. Heckaman,
         SID Digest, Volume 49, Issue 1, May 2018, 1048-1051</a></p>
-      <p>Calculation based on: <a href="https://doi.org/10.1002/jsid.918">E. Smith, R. L. Heckaman, K. Lang, J. Penczek, J. Bergquist,
+      <p>Calculation based on: <a href="https://doi.org/10.1002/jsid.918" target="_blank">E. Smith, R. L. Heckaman, K. Lang, J. Penczek, J. Bergquist,
          JSID, Volume 28, Issue 6, June 2020, 548-556.
         </a></p>
-      <p>and <a href="https://doi.org/10.1002/jsid.1292">E. Smith, JSID, May 2024, doi.org/10.1002/jsid.1292</a></p>
-      <p> &copy;2021 Euan Smith. Licensed under the <a href="https://opensource.org/licenses/MIT">MIT</a> licence - distribute and use freely! Find me on <a href="https://github.com/euan-smith">github</a></p>
+      <p>and <a href="https://doi.org/10.1002/jsid.1292" target="_blank">E. Smith, JSID, May 2024, doi.org/10.1002/jsid.1292</a></p>
+      <p> &copy;2021-2024 Euan Smith. Licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a> licence - distribute and use freely! Find <a href="https://github.com/euan-smith" target="_blank">me</a>
+      or <a href="https://github.com/CIELab-gamut-tools" target="_blank">gamut tools</a> on github</p>
     </div>
     <div class=volume>{{refGamut?"INTERSECTION ":""}}VOLUME = {{displayCGV}} &#916;E&#179;</div>
   </div>
@@ -85,11 +95,21 @@ html,body{
   left:0;
   cursor:pointer;
 }
-.header>.github{
+.header>.supported{
   position:absolute;
   top:0;
   right:0;
   cursor:pointer;
+  font-size:2em;
+  display:flex;
+  flex-direction: row;
+  padding-right:8px;
+}
+.supported>.by{
+  display:block;
+  position:relative;
+  margin:auto 8px;
+  padding-bottom:4px;
 }
 
 .menu li{
